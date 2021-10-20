@@ -54,6 +54,8 @@ function init() {
             viewAllDepartments();
         } else if (choices.Add === "Add Department") {
             addDepartment();
+        } else if (choices.Add === "Quit") {
+            process.exit;
         }
     })
 };
@@ -102,6 +104,112 @@ async function addRole() {
     });
     
 }
+async function chooseRole(type) {
+    var tempRole;
+    var tempRoleIds;
+    var tempDepartmentIds;
+    db.query(`SELECT * FROM employee_role
+        ORDER BY id ASC;`
+        , function (err, results) {
+            if (err) throw err;
+            console.log(results);
+            if (type === 'role') {
+                tempRole = results.map(element => {
+                    return element.title
+                });
+            } else if (type === 'roleIds') {
+                tempRoleIds = results.map(element => {
+                    return element.id
+                });
+            } else if (type === 'departmentIds') {
+                tempDepartmentIds = results.map(element => {
+                    return element.department_id
+                });
+            }
+    });
+    if (type === 'role') {
+        return {
+            role: tempRole
+        }
+    } else if (type === 'roleIds') {
+        return {
+            roleIds: tempRoleIds
+        }
+    } else if (type === 'departmentIds') {
+        return {
+            departmentIds: tempDepartmentIds
+        }
+    }
+}
+async function addEmployee() {
+    db.query(`SELECT * FROM employee
+        ORDER BY id ASC;`
+        , function (err, res) {
+            // var tempRole;
+            // var tempRoleIds;
+            // var tempDepartmentIds;
+            var tempObj = chooseRole();
+            console.log(tempObj);
+            const tempRole = chooseRole('role').map(element => {
+                return element.title
+            });
+            const tempRoleIds = tempObj.map(element => {
+                return element.id
+            });
+            const tempDepartmentIds = tempObj.map(element => {
+                return element.department_id
+            });
+            console.log(tempRole);
+            console.log(tempRoleIds);
+            console.log(tempDepartmentIds);
+            if (err) throw err;
+            const managers = results.map(element => {
+                return element.name
+            })
+            const ids = results.map(element => {
+                return element.id
+            })
+            // inquirer.prompt([
+            //     {
+            //         type: "input"
+            //         , message: "What is the employee's first name?"
+            //         , name: "first"
+            //     }
+            //     , {
+            //         type: "input"
+            //         , message: "What is the employee's last name?"
+            //         , name: "last"
+            //     }
+            //     , {
+            //         type: "list"
+            //         , message: "What is the employee's role?"
+            //         , name: "role"
+            //         , choices: chooseRole('role')
+            //     }
+            //     , {
+            //         type: "list"
+            //         , message: "Who is the employee's manager?"
+            //         , name: "manager"
+            //         , choices: managers
+            //     }
+            // ]).then((choices) => {
+            //     const idNum = managers.findIndex((managers) => managers === choices.manager)
+            //     const roleIdNum = tempRole.findIndex((tempRole) => tempRole === choices.role)
+            //     const manager_id = ids[idNum]
+            //     const role_id = tempRoleIds[roleIdNum]
+            //     const department_id = tempDepartmentIds[roleIdNum]
+            //     console.log(idNum);
+            //     console.log(ids[idNum]);
+            //     db.query(`INSERT INTO employee (first_name, last_name, role_id, department_id, manager_id)
+            //         VALUES ('${choices.first}', '${choices.last}', '${role_id}', '${department_id}', '${manager_id}');`
+            //         , function (err, results) {
+            //         console.log(`Added ${choices.first} ${choices.last} to the database`);
+            //         setTimeout(() => init(), 2000)
+            //     });
+            // })
+    });
+    
+}
 async function addDepartment() {
     inquirer.prompt([
         {
@@ -136,7 +244,7 @@ async function viewAllEmployees() {
     INNER JOIN employee_role role
     ON employ.role_id = role.id
     ORDER BY id Asc;`, function (err, results) {
-        console.log(results);
+        console.table(results);
     });
     setTimeout(() => init(), 2000)
 }
@@ -150,7 +258,7 @@ async function viewAllRoles() {
     INNER JOIN department depart 
     ON role.department_id = depart.id
     ORDER BY id ASC;`, function (err, results) {
-        console.log(results);
+        console.table(results);
     });
     setTimeout(() => init(), 2000)
 }
@@ -160,7 +268,7 @@ async function viewAllDepartments() {
         , depart.name
     FROM department depart
     ORDER BY id ASC;`, function (err, results) {
-        console.log(results);
+        console.table(results);
     });
     setTimeout(() => init(), 2000)
 }

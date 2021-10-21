@@ -6,6 +6,8 @@ USE employee_db;
 CREATE TABLE department (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY
   , name varchar(30) NOT NULL
+  , manager_first varchar(30)
+  , manager_last varchar(30)
 );
 
 CREATE TABLE employee_role (
@@ -24,7 +26,6 @@ CREATE TABLE employee (
   , last_name varchar(30)
   , role_id INT
   , department_id INT
-  , manager_id INT
   , FOREIGN KEY (role_id)
   REFERENCES employee_role(id)
   ON DELETE SET NULL

@@ -1,14 +1,12 @@
 SELECT employ.id
-        , employ.first_name
-        , employ.last_name
-        , role.title as title
-        , depart.name as department
-        , role.salary
-        , manager.first_name as manager
+        , concat(employ.first_name, ' ', employ.last_name) as Employee
+        , role.title as Title
+        , depart.name as Department
+        , role.salary as Salary
+        , concat(depart.manager_first, ' ', depart.manager_last) as Manager
 FROM employee employ
-JOIN employee manager
-ON employ.manager_id = manager.id
 INNER JOIN department depart 
 ON employ.department_id = depart.id
 INNER JOIN employee_role role
-ON employ.role_id = role.id;
+ON employ.role_id = role.id
+ORDER BY id ASC;
